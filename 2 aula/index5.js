@@ -8,4 +8,4 @@ class EnviaMensagem extends EventEmitter{
     }
 }
 
-module.export= EnviaMensagem
+module.export= EnviaMensagem;
