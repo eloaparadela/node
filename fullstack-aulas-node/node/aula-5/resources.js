@@ -22,13 +22,23 @@ app.get('/api/users/:id', (req, res) => {
 });
 
 app.post('/api/users', (req, res) => {
-  const id = Math.max(...users.map(user => user.id));
+  const id = Math.max(...users.map(user => user.id)) + 1;
 
   const newUser = {
-    id: id,
+    id,
     name: req.body.name,
     email: req.body.email
   };
+  const schema ={
+    name: Joi.string().required(),
+    email: Joi.string().required()
+  }
+  const validation = Joi.validate(req.body, schema);
+      
+  
+  if(validaton.error){
+    return res.status(400).send(validation.error.details[0].message);
+  }
 
   users.push(newUser);
   res.send(newUser);
@@ -36,21 +46,21 @@ app.post('/api/users', (req, res) => {
 
 app.put('/api/users/:id', (req, res) => {
   const foundUser = users.find(user => user.id === parseInt(req.params.id));
+
+  if (!foundUser){
+    return res.status(404).send('Amigo, cancela!');
+  }
   const schema ={
     name: Joi.string().required(),
     email: Joi.string().required()
   }
   const validation = Joi.validate(req.body, schema);
       
-
+  
   if(validaton.error){
     return res.status(400).send(validation.error.details[0].message);
   }
 
-
-  if (!foundUser){
-    return res.status(404).send('Amigo, cancela!');
-  }
 
   // if(!req.body.name || !req.body.email){
   //    return res.status(400).send('Precisa incluir nome e email');
@@ -99,3 +109,5 @@ app.put('/api/users/:id', (req, res) => {
 // }
 
 app.listen(3000, () => console.log('Ouvindo na porta 3000...'));
+
+
